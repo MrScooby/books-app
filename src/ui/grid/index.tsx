@@ -1,46 +1,63 @@
-import Link from 'next/link'
+'use client'
+
 import GridTile from './gridTile'
-import { Box, Grid as MuiGrid } from '@mui/material'
+import {
+  Box,
+  MenuItem,
+  Grid as MuiGrid,
+  Pagination,
+  Select,
+  SelectChangeEvent
+} from '@mui/material'
 import { Book } from '@/src/types/books'
+import { PaginatedResult } from '@/src/types/pagination.g'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 
 interface GridProps {
-  data?: Book[]
-  //   page: number
-  //   setPage: (page: number) => void
-  //   elementType: string
+  collection?: PaginatedResult<Book>
 }
 
-// TODO: resize on smaller screens
-export default function Grid({ data }: GridProps) {
-  // if (!data?.length) {
-  //   return (
-  //     <div className="w-full h-full flex justify-center items-center">
-  //       Something went wrong - nothing to display
-  //     </div>
-  //   )
-  // }
+// TODO: adjust for smaller screens
+export default function Grid({ collection }: GridProps) {
+  if (!collection?.data?.length) {
+    return (
+      // TODO: prepare proper typography and move to separate component
+      <div className="w-full h-full flex justify-center items-center">
+        Nothing to display.
+      </div>
+    )
+  }
 
-  //   const numberOfPages = Math.ceil(data?.count / 10)
-  //   const pagesButtons = []
+  const router = useRouter()
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
 
-  //   for (let i = 0; i < numberOfPages; i++) {
-  //     pagesButtons.push(
-  //       <div
-  //         key={i}
-  //         className={`flex cursor-pointer m-2 bg-sky-700 rounded-full w-10 h-10 justify-center items-center
-  //                 text-white font-bold ${page === i + 1 && 'bg-sky-900'}`}
-  //         onClick={() => setPage(i + 1)}
-  //       >
-  //         {i + 1}
-  //       </div>
-  //     )
-  //   }
+  const currentPage = Number(searchParams.get('page')) || 1
+  const currentPerPage = Number(searchParams.get('perPage')) || 10
+
+  const onPaginationClick = (e: any, page: number) => {
+    const params = new URLSearchParams(searchParams)
+
+    params.set('page', String(page))
+
+    router.replace(`${pathname}?${params.toString()}`)
+  }
+
+  const onPerPageClick = (e: SelectChangeEvent) => {
+    const params = new URLSearchParams(searchParams)
+
+    params.set('perPage', String(e.target.value))
+
+    router.replace(`${pathname}?${params.toString()}`)
+  }
 
   return (
     <Box
       sx={{
         display: 'flex',
-        maxWidth: 1200
+        flexDirection: 'column',
+        alignItems: 'center',
+        maxWidth: 1080
       }}
     >
       <MuiGrid
@@ -49,7 +66,7 @@ export default function Grid({ data }: GridProps) {
           margin: 'auto'
         }}
       >
-        {data?.map((element) => {
+        {collection?.data?.map((element) => {
           return (
             // <Link key={element.name} href={`/${elementType}/${characterId}`}>
             <GridTile key={element.id} element={element} />
@@ -57,7 +74,43 @@ export default function Grid({ data }: GridProps) {
           )
         })}
       </MuiGrid>
-      {/* <div className="mt-8 mb-8 flex justify-center">{pagesButtons}</div> */}
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'row',
+          width: '100%',
+          justifyContent: 'space-between',
+          alignItems: 'center'
+        }}
+      >
+        <Box sx={{ width: 52 }} />
+        <Pagination
+          count={collection.meta.totalPages}
+          shape="rounded"
+          boundaryCount={1}
+          siblingCount={2}
+          page={currentPage}
+          onChange={onPaginationClick}
+        />
+        <Box>
+          <Select
+            variant="standard"
+            sx={{
+              width: 52,
+              '&:hover': {
+                background: 'none'
+              }
+            }}
+            value={String(currentPerPage)}
+            onChange={onPerPageClick}
+          >
+            <MenuItem value={10}>10</MenuItem>
+            <MenuItem value={25}>25</MenuItem>
+            <MenuItem value={50}>50</MenuItem>
+            <MenuItem value={100}>100</MenuItem>
+          </Select>
+        </Box>
+      </Box>
     </Box>
   )
 }

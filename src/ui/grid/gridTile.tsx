@@ -1,6 +1,6 @@
 import Image from 'next/image'
-import { Box, Grid as MuiGrid, Typography } from '@mui/material'
-import { Book } from '@/app/lib/types/books'
+import { Grid as MuiGrid, Typography } from '@mui/material'
+import { Book } from '@/src/types/books'
 
 interface GridTileProps {
   element: Book
