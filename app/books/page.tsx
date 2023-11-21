@@ -8,7 +8,8 @@ type BooksPageProps = {
 
 export default async function Page({ searchParams }: BooksPageProps) {
   const currentPage = Number(searchParams.page)
-  const books = await getBooksPaginated({ page: currentPage })
+  const perPage = Number(searchParams.perPage)
+  const books = await getBooksPaginated({ page: currentPage, perPage: perPage })
 
   return (
     <main>
