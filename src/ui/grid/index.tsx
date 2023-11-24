@@ -33,7 +33,7 @@ export default function Grid({ collection }: GridProps) {
   const searchParams = useSearchParams()
 
   const currentPage = Number(searchParams.get('page')) || 1
-  const currentPerPage = Number(searchParams.get('perPage')) || 10
+  const currentPerPage = Number(searchParams.get('perPage')) || 20
 
   const onPaginationClick = (e: any, page: number) => {
     const params = new URLSearchParams(searchParams)
@@ -57,7 +57,7 @@ export default function Grid({ collection }: GridProps) {
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        maxWidth: 1080
+        maxWidth: 1512
       }}
     >
       <MuiGrid
@@ -80,7 +80,8 @@ export default function Grid({ collection }: GridProps) {
           flexDirection: 'row',
           width: '100%',
           justifyContent: 'space-between',
-          alignItems: 'center'
+          alignItems: 'center',
+          marginTop: 2
         }}
       >
         <Box sx={{ width: 52 }} />
@@ -104,9 +105,8 @@ export default function Grid({ collection }: GridProps) {
             value={String(currentPerPage)}
             onChange={onPerPageClick}
           >
-            <MenuItem value={10}>10</MenuItem>
-            <MenuItem value={25}>25</MenuItem>
-            <MenuItem value={50}>50</MenuItem>
+            <MenuItem value={20}>20</MenuItem>
+            <MenuItem value={40}>40</MenuItem>
             <MenuItem value={100}>100</MenuItem>
           </Select>
         </Box>

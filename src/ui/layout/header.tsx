@@ -19,6 +19,7 @@ export default function header({
         backgroundColor: 'lightgrey'
       }}
     >
+      {/* TODO: move close icon to drawer - it will work much better on mobiles */}
       <IconButton
         onClick={() => setOpen(false)}
         disableRipple={true}

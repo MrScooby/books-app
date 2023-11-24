@@ -6,4 +6,6 @@ export type Book = {
   rating: number
   title: string
   url: string
+  // TODO: add genre and shelves
+  imgUrl?: string
 }

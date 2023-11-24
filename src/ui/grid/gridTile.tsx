@@ -28,7 +28,7 @@ export default function GridTile({ element }: GridTileProps) {
       }}
     >
       <Image
-        src="/avatar-placeholder.svg"
+        src={element.imgUrl ?? '/avatar-placeholder.svg'}
         alt="grid-tile-img"
         width={150}
         height={220}

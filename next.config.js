@@ -8,6 +8,16 @@ const nextConfig = {
         permanent: false
       }
     ]
+  },
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 's.lubimyczytac.pl' // TODO: move img to private host? s3?
+        // port: ''
+        // pathname: ''
+      }
+    ]
   }
 }
 
