@@ -9,7 +9,7 @@ import {
   Select,
   SelectChangeEvent
 } from '@mui/material'
-import { Book } from '@/src/types/books'
+import { Book } from '@/src/types'
 import { PaginatedResult } from '@/src/types/pagination.g'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'

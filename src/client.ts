@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { Book } from './types/books'
+import { Author, Book, Genre } from './types'
 import { PaginatedResult, SearchPaginatedData } from './types/pagination.g'
 
 const api = axios.create({
@@ -31,8 +31,8 @@ export const getBooksPaginated = async (
     return paginatedData
   } catch (e) {
     // TODO: better error handling - generic errors? redirect to error page
-    console.log('fetch books error: ', e)
-    throw new Error('Failed to fetch books.')
+    console.log('fetch error: ', e)
+    throw new Error('Failed to fetch data.')
   }
 }
 
@@ -44,9 +44,8 @@ export const getBookTitleById = async (id: string): Promise<string> => {
 
     return bookTitle
   } catch (e) {
-    // TODO: better error handling - generic errors? redirect to error page
-    console.log('fetch books error: ', e)
-    throw new Error('Failed to fetch books.')
+    console.log('fetch error: ', e)
+    throw new Error('Failed to fetch data.')
   }
 }
 
@@ -58,8 +57,35 @@ export const getBookById = async (id: string): Promise<Book> => {
 
     return bookData
   } catch (e) {
-    // TODO: better error handling - generic errors? redirect to error page
-    console.log('fetch books error: ', e)
-    throw new Error('Failed to fetch books.')
+    console.log('fetch error: ', e)
+    throw new Error('Failed to fetch data.')
   }
 }
+
+export const getGenreNameById = async (id: string): Promise<String> => {
+  try {
+    const res = await api.get<String>(`/genres/name/${id}`)
+
+    const genreName = res.data
+
+    return genreName
+  } catch (e) {
+    console.log('fetch error: ', e)
+    throw new Error('Failed to fetch data.')
+  }
+}
+
+// export const getAuthorsNamesByIds = async (
+//   ids: string[]
+// ): Promise<Author[]> => {
+//   try {
+//     const res = await api.get<Author[]>(`/authors/${id}`)
+
+//     const authorsNames = res.data
+
+//     return authorsNames
+//   } catch (e) {
+//     console.log('fetch error: ', e)
+//     throw new Error('Failed to fetch data.')
+//   }
+// }
