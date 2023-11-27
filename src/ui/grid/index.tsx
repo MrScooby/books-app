@@ -12,6 +12,7 @@ import {
 import { Book } from '@/src/types/books'
 import { PaginatedResult } from '@/src/types/pagination.g'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
+import Link from 'next/link'
 
 interface GridProps {
   collection?: PaginatedResult<Book>
@@ -68,9 +69,9 @@ export default function Grid({ collection }: GridProps) {
       >
         {collection?.data?.map((element) => {
           return (
-            // <Link key={element.name} href={`/${elementType}/${characterId}`}>
-            <GridTile key={element.id} element={element} />
-            // </Link>
+            <Link key={element.id} href={`/books/${element.id}`}>
+              <GridTile key={element.id} element={element} />
+            </Link>
           )
         })}
       </MuiGrid>
