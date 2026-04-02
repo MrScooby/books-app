@@ -29,10 +29,13 @@ export default async function BooksPage({
     getGenres({ perPage: 100 })
   ])
 
+  const sort = (items: { id: string; name: string }[]) =>
+    items.sort((a, b) => a.name.localeCompare(b.name))
+
   const filterOptions = {
-    shelves: shelves.data.map((s) => ({ id: s.id, name: s.name })),
-    authors: authors.data.map((a) => ({ id: a.id, name: a.name })),
-    genres: genres.data.map((g) => ({ id: g.id, name: g.name }))
+    shelves: sort(shelves.data.map((s) => ({ id: s.id, name: s.name }))),
+    authors: sort(authors.data.map((a) => ({ id: a.id, name: a.name }))),
+    genres: sort(genres.data.map((g) => ({ id: g.id, name: g.name })))
   }
 
   return (

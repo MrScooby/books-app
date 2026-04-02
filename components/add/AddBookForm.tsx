@@ -33,7 +33,7 @@ export default function AddBookForm() {
   useEffect(() => {
     getShelves({ perPage: 100 })
       .then((res) => setShelves(res.data))
-      .catch(() => setError('Failed to load shelves'))
+      .catch(() => setError('Failed to load shelves. The API server may be down.'))
   }, [])
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -66,7 +66,9 @@ export default function AddBookForm() {
       setRating(5)
       setSelectedShelves([])
     } catch (err: any) {
-      const message = err.response?.data?.error || err.message || 'Failed to add book'
+      const message = err.message?.includes('fetch') || err.message?.includes('Network')
+        ? 'Unable to connect to the API. Please check if the backend is running.'
+        : err.message || 'Failed to add book'
       setError(message)
     } finally {
       setLoading(false)
