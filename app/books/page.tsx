@@ -3,6 +3,9 @@ import BookGrid from '@/components/books/BookGrid'
 import BookFilters from '@/components/books/BookFilters'
 import PaginationControls from '@/components/books/PaginationControls'
 import { getBooks } from '@/lib/api/books'
+import { getShelves } from '@/lib/api/shelves'
+import { getAuthors } from '@/lib/api/authors'
+import { getGenres } from '@/lib/api/genres'
 
 export default async function BooksPage({
   searchParams
@@ -13,18 +16,29 @@ export default async function BooksPage({
   const page = Number(params.page) || 1
   const perPage = Number(params.perPage) || 20
 
-  const books = await getBooks({
-    page,
-    perPage,
-    shelfId: params.shelfId,
-    authorId: params.authorId,
-    genreId: params.genreId
-  })
+  const [books, shelves, authors, genres] = await Promise.all([
+    getBooks({
+      page,
+      perPage,
+      shelfId: params.shelfId,
+      authorId: params.authorId,
+      genreId: params.genreId
+    }),
+    getShelves({ perPage: 100 }),
+    getAuthors({ perPage: 100 }),
+    getGenres({ perPage: 100 })
+  ])
+
+  const filterOptions = {
+    shelves: shelves.data.map((s) => ({ id: s.id, name: s.name })),
+    authors: authors.data.map((a) => ({ id: a.id, name: a.name })),
+    genres: genres.data.map((g) => ({ id: g.id, name: g.name }))
+  }
 
   return (
     <>
       <Suspense>
-        <BookFilters />
+        <BookFilters options={filterOptions} />
       </Suspense>
       <BookGrid books={books.data} />
       <Suspense>

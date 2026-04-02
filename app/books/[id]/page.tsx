@@ -1,10 +1,7 @@
 import { Box, Typography, Chip, Rating, Stack, Card, CardMedia } from '@mui/material'
 import { MenuBook, Person, Category, LibraryBooks } from '@mui/icons-material'
 import Link from 'next/link'
-import { getBook } from '@/lib/api/books'
-import { getGenre } from '@/lib/api/genres'
-import { getAuthor } from '@/lib/api/authors'
-import { getShelves } from '@/lib/api/shelves'
+import { getBookFull } from '@/lib/api/books'
 
 export default async function BookDetailPage({
   params
@@ -12,18 +9,7 @@ export default async function BookDetailPage({
   params: Promise<{ id: string }>
 }) {
   const { id } = await params
-  const book = await getBook(id)
-
-  const [genre, authors, shelvesData] = await Promise.all([
-    book.genreId ? getGenre(book.genreId).catch(() => null) : null,
-    Promise.all(book.authorsIds.map((aid) => getAuthor(aid).catch(() => null))),
-    getShelves({ perPage: 100 })
-  ])
-
-  const authorItems = authors.filter(Boolean).map((a) => ({ id: a!.id, name: a!.name }))
-  const shelfItems = shelvesData.data
-    .filter((s) => book.shelvesIds.includes(s.id))
-    .map((s) => ({ id: s.id, name: s.name }))
+  const book = await getBookFull(id)
 
   return (
     <Box sx={{ display: 'flex', gap: 4, flexDirection: { xs: 'column', md: 'row' } }}>
@@ -41,15 +27,15 @@ export default async function BookDetailPage({
           {book.title}
         </Typography>
 
-        {authorItems.length > 0 && (
+        {book.authors.length > 0 && (
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
             <Person fontSize="small" color="action" />
-            {authorItems.map((a, i) => (
+            {book.authors.map((a, i) => (
               <span key={a.id}>
                 <Link href={`/books?authorId=${a.id}`} style={{ color: 'inherit' }}>
                   {a.name}
                 </Link>
-                {i < authorItems.length - 1 && ', '}
+                {i < book.authors.length - 1 && ', '}
               </span>
             ))}
           </Box>
@@ -67,19 +53,19 @@ export default async function BookDetailPage({
           <Typography color="text.secondary">{book.pages} pages</Typography>
         </Box>
 
-        {genre && (
+        {book.genre && (
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             <Category fontSize="small" color="action" />
-            <Link href={`/books?genreId=${book.genreId}`} style={{ color: 'inherit' }}>
-              {genre.name}
+            <Link href={`/books?genreId=${book.genre.id}`} style={{ color: 'inherit' }}>
+              {book.genre.name}
             </Link>
           </Box>
         )}
 
-        {shelfItems.length > 0 && (
+        {book.shelves.length > 0 && (
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
             <LibraryBooks fontSize="small" color="action" />
-            {shelfItems.map((s) => (
+            {book.shelves.map((s) => (
               <Link key={s.id} href={`/books?shelfId=${s.id}`} style={{ textDecoration: 'none' }}>
                 <Chip label={s.name} size="small" variant="outlined" clickable />
               </Link>

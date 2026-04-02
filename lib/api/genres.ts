@@ -1,15 +1,13 @@
-import apiClient from './client'
+import { apiFetch } from './client'
 import { Genre, GenreListItem, PaginatedResponse } from '../types'
 
 export async function getGenres(params?: {
   page?: number
   perPage?: number
 }): Promise<PaginatedResponse<GenreListItem>> {
-  const { data } = await apiClient.get('/genres', { params })
-  return data
+  return apiFetch('/genres', { params })
 }
 
 export async function getGenre(id: string): Promise<Genre> {
-  const { data } = await apiClient.get(`/genres/${id}`)
-  return data
+  return apiFetch(`/genres/${id}`)
 }

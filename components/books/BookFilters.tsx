@@ -1,31 +1,29 @@
 'use client'
 
-import { useState, useEffect } from 'react'
 import { Box, FormControl, InputLabel, Select, MenuItem, IconButton } from '@mui/material'
 import { Clear } from '@mui/icons-material'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { getShelves } from '@/lib/api/shelves'
-import { getAuthors } from '@/lib/api/authors'
-import { getGenres } from '@/lib/api/genres'
-import { ShelfListItem, AuthorListItem, GenreListItem } from '@/lib/types'
 
-export default function BookFilters() {
+interface FilterOption {
+  id: string
+  name: string
+}
+
+export default function BookFilters({
+  options
+}: {
+  options: {
+    shelves: FilterOption[]
+    authors: FilterOption[]
+    genres: FilterOption[]
+  }
+}) {
   const router = useRouter()
   const searchParams = useSearchParams()
 
   const shelfId = searchParams.get('shelfId') ?? ''
   const authorId = searchParams.get('authorId') ?? ''
   const genreId = searchParams.get('genreId') ?? ''
-
-  const [shelves, setShelves] = useState<ShelfListItem[]>([])
-  const [authors, setAuthors] = useState<AuthorListItem[]>([])
-  const [genres, setGenres] = useState<GenreListItem[]>([])
-
-  useEffect(() => {
-    getShelves({ perPage: 100 }).then((res) => setShelves(res.data))
-    getAuthors({ perPage: 100 }).then((res) => setAuthors(res.data))
-    getGenres({ perPage: 100 }).then((res) => setGenres(res.data))
-  }, [])
 
   const updateFilter = (key: string, value: string) => {
     const params = new URLSearchParams(searchParams.toString())
@@ -57,7 +55,7 @@ export default function BookFilters() {
           onChange={(e) => updateFilter('shelfId', e.target.value)}
         >
           <MenuItem value="">All shelves</MenuItem>
-          {shelves.map((s) => (
+          {options.shelves.map((s) => (
             <MenuItem key={s.id} value={s.id}>{s.name}</MenuItem>
           ))}
         </Select>
@@ -71,7 +69,7 @@ export default function BookFilters() {
           onChange={(e) => updateFilter('authorId', e.target.value)}
         >
           <MenuItem value="">All authors</MenuItem>
-          {authors.map((a) => (
+          {options.authors.map((a) => (
             <MenuItem key={a.id} value={a.id}>{a.name}</MenuItem>
           ))}
         </Select>
@@ -85,7 +83,7 @@ export default function BookFilters() {
           onChange={(e) => updateFilter('genreId', e.target.value)}
         >
           <MenuItem value="">All genres</MenuItem>
-          {genres.map((g) => (
+          {options.genres.map((g) => (
             <MenuItem key={g.id} value={g.id}>{g.name}</MenuItem>
           ))}
         </Select>

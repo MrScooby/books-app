@@ -1,4 +1,4 @@
-import apiClient from './client'
+import { apiFetch, apiPost } from './client'
 import { PaginatedResponse, BookListItem, BookDetail, CreateBookPayload } from '../types'
 
 export async function getBooks(params?: {
@@ -9,16 +9,30 @@ export async function getBooks(params?: {
   authorId?: string
   genreId?: string
 }): Promise<PaginatedResponse<BookListItem>> {
-  const { data } = await apiClient.get('/books', { params })
-  return data
+  return apiFetch('/books', { params })
 }
 
 export async function getBook(id: string): Promise<BookDetail> {
-  const { data } = await apiClient.get(`/books/${id}`)
-  return data
+  return apiFetch(`/books/${id}`)
+}
+
+export interface BookFullDetail {
+  id: string
+  ISBN: string | null
+  pages: number
+  rating: number
+  title: string
+  url: string
+  imgUrl: string
+  genre: { id: string; name: string } | null
+  authors: { id: string; name: string }[]
+  shelves: { id: string; name: string }[]
+}
+
+export async function getBookFull(id: string): Promise<BookFullDetail> {
+  return apiFetch(`/books/${id}/full`)
 }
 
 export async function createBook(payload: CreateBookPayload): Promise<string> {
-  const { data } = await apiClient.post('/books', payload)
-  return data
+  return apiPost('/books', payload)
 }
