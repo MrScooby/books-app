@@ -1,8 +1,9 @@
-import Layout from '@/src/ui/layout'
-import type { Metadata } from 'next'
+import MuiProvider from '@/components/layout/MuiProvider'
+import AppShell from '@/components/layout/AppShell'
 
-export const metadata: Metadata = {
-  title: 'My books'
+export const metadata = {
+  title: 'My books',
+  description: 'Personal book collection'
 }
 
 export default function RootLayout({
@@ -13,7 +14,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body style={{ margin: 0 }}>
-        <Layout>{children}</Layout>
+        <MuiProvider>
+          <AppShell>{children}</AppShell>
+        </MuiProvider>
       </body>
     </html>
   )
