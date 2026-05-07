@@ -113,18 +113,14 @@ export default function AddBookForm() {
             disabled={loading}
             renderValue={(selected) => (
               <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                {selected.map((id) => (
-                  <Chip
-                    key={id}
-                    label={shelves.find((s) => s.id === id)?.name ?? id}
-                    size="small"
-                  />
+                {selected.map((name) => (
+                  <Chip key={name} label={name} size="small" />
                 ))}
               </Box>
             )}
           >
             {shelves.map((shelf) => (
-              <MenuItem key={shelf.id} value={shelf.id}>
+              <MenuItem key={shelf.id} value={shelf.name}>
                 {shelf.name}
               </MenuItem>
             ))}

@@ -16,7 +16,7 @@ export default async function BookDetailPage({
       <Card sx={{ flexShrink: 0, alignSelf: 'flex-start' }}>
         <CardMedia
           component="img"
-          image={book.imgUrl || '/placeholder.svg'}
+          image={book.imgUrl?.startsWith('http') ? book.imgUrl : '/placeholder.svg'}
           alt={book.title}
           sx={{ width: { xs: '100%', md: 250 }, height: 'auto' }}
         />

@@ -9,7 +9,7 @@ export default function BookCard({ book }: { book: BookListItem }) {
         <CardActionArea sx={{ height: '100%' }}>
           <CardMedia
             component="img"
-            image={book.imgUrl || '/placeholder.svg'}
+            image={book.imgUrl?.startsWith('http') ? book.imgUrl : '/placeholder.svg'}
             alt={book.title}
             sx={{ height: 280, objectFit: 'cover' }}
           />

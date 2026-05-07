@@ -34,5 +34,6 @@ export async function getBookFull(id: string): Promise<BookFullDetail> {
 }
 
 export async function createBook(payload: CreateBookPayload): Promise<string> {
-  return apiPost('/books', payload)
+  const res = await apiPost<{ id: string }>('/books', payload)
+  return res.id
 }
