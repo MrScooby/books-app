@@ -80,3 +80,14 @@ export interface CreateBookPayload {
   rating: number
   shelves: string[]
 }
+
+export interface UpdateBookPayload {
+  title?: string
+  rating?: number
+  pages?: number
+  ISBN?: string
+  url?: string
+  imgUrl?: string
+  genreId?: string
+  authorIds?: string[]
+}

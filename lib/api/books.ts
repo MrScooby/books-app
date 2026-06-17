@@ -1,10 +1,17 @@
-import { apiFetch, apiPost } from './client'
-import { PaginatedResponse, BookListItem, BookDetail, CreateBookPayload } from '../types'
+import { apiFetch, apiPost, apiPatch } from './client'
+import {
+  PaginatedResponse,
+  BookListItem,
+  BookDetail,
+  CreateBookPayload,
+  UpdateBookPayload
+} from '../types'
 
 export async function getBooks(params?: {
   page?: number
   perPage?: number
   orderDirection?: 'ASC' | 'DESC'
+  search?: string
   shelfId?: string
   authorId?: string
   genreId?: string
@@ -30,10 +37,24 @@ export interface BookFullDetail {
 }
 
 export async function getBookFull(id: string): Promise<BookFullDetail> {
-  return apiFetch(`/books/${id}/full`)
+  return apiFetch(`/books/${id}/full`, { cache: 'no-store' })
 }
 
 export async function createBook(payload: CreateBookPayload): Promise<string> {
   const res = await apiPost<{ id: string }>('/books', payload)
   return res.id
+}
+
+export async function updateBook(
+  id: string,
+  payload: UpdateBookPayload
+): Promise<BookDetail> {
+  return apiPatch<BookDetail>(`/books/${id}`, payload)
+}
+
+export async function addBookToShelf(
+  id: string,
+  shelfName: string
+): Promise<BookDetail> {
+  return apiPatch<BookDetail>(`/books/add-on-shelf/${id}`, { shelfName })
 }

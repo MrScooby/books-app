@@ -2,6 +2,10 @@ import { Box, Typography, Chip, Rating, Stack, Card, CardMedia } from '@mui/mate
 import { MenuBook, Person, Category, LibraryBooks } from '@mui/icons-material'
 import Link from 'next/link'
 import { getBookFull } from '@/lib/api/books'
+import { getGenres } from '@/lib/api/genres'
+import { getAuthors } from '@/lib/api/authors'
+import { getShelves } from '@/lib/api/shelves'
+import BookAdminActions from '@/components/books/BookAdminActions'
 
 export default async function BookDetailPage({
   params
@@ -9,7 +13,15 @@ export default async function BookDetailPage({
   params: Promise<{ id: string }>
 }) {
   const { id } = await params
-  const book = await getBookFull(id)
+  const [book, genres, authors, shelves] = await Promise.all([
+    getBookFull(id),
+    getGenres({ perPage: 100 }),
+    getAuthors({ perPage: 100 }),
+    getShelves({ perPage: 100 })
+  ])
+
+  const sort = (items: { id: string; name: string }[]) =>
+    items.map((i) => ({ id: i.id, name: i.name })).sort((a, b) => a.name.localeCompare(b.name))
 
   return (
     <Box sx={{ display: 'flex', gap: 4, flexDirection: { xs: 'column', md: 'row' } }}>
@@ -23,9 +35,17 @@ export default async function BookDetailPage({
       </Card>
 
       <Stack spacing={2} sx={{ flex: 1 }}>
-        <Typography variant="h4" fontWeight={600}>
-          {book.title}
-        </Typography>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 2, flexWrap: 'wrap' }}>
+          <Typography variant="h4" fontWeight={600}>
+            {book.title}
+          </Typography>
+          <BookAdminActions
+            book={book}
+            genres={sort(genres.data)}
+            authors={sort(authors.data)}
+            shelves={sort(shelves.data)}
+          />
+        </Box>
 
         {book.authors.length > 0 && (
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>

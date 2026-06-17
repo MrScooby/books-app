@@ -10,7 +10,7 @@ import { getGenres } from '@/lib/api/genres'
 export default async function BooksPage({
   searchParams
 }: {
-  searchParams: Promise<{ page?: string; perPage?: string; shelfId?: string; authorId?: string; genreId?: string }>
+  searchParams: Promise<{ page?: string; perPage?: string; search?: string; shelfId?: string; authorId?: string; genreId?: string }>
 }) {
   const params = await searchParams
   const page = Number(params.page) || 1
@@ -20,6 +20,7 @@ export default async function BooksPage({
     getBooks({
       page,
       perPage,
+      search: params.search,
       shelfId: params.shelfId,
       authorId: params.authorId,
       genreId: params.genreId

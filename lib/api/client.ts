@@ -2,7 +2,10 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3000'
 
 export async function apiFetch<T>(
   path: string,
-  options?: { params?: Record<string, string | number | undefined> }
+  options?: {
+    params?: Record<string, string | number | undefined>
+    cache?: RequestCache
+  }
 ): Promise<T> {
   const url = new URL(path, API_URL)
 
@@ -12,7 +15,7 @@ export async function apiFetch<T>(
     })
   }
 
-  const res = await fetch(url.toString(), { cache: 'force-cache' })
+  const res = await fetch(url.toString(), { cache: options?.cache ?? 'force-cache' })
 
   if (!res.ok) {
     throw new Error(`API error: ${res.status} ${res.statusText}`)
@@ -29,9 +32,13 @@ function adminHeaders(): Record<string, string> {
   return token ? { 'X-Admin-Token': token } : {}
 }
 
-export async function apiPost<T>(path: string, body: unknown): Promise<T> {
+async function apiWrite<T>(
+  method: 'POST' | 'PATCH',
+  path: string,
+  body: unknown
+): Promise<T> {
   const res = await fetch(`${API_URL}${path}`, {
-    method: 'POST',
+    method,
     headers: {
       'Content-Type': 'application/json',
       ...adminHeaders()
@@ -49,4 +56,12 @@ export async function apiPost<T>(path: string, body: unknown): Promise<T> {
   }
 
   return res.json()
+}
+
+export async function apiPost<T>(path: string, body: unknown): Promise<T> {
+  return apiWrite<T>('POST', path, body)
+}
+
+export async function apiPatch<T>(path: string, body: unknown): Promise<T> {
+  return apiWrite<T>('PATCH', path, body)
 }
