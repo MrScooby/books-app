@@ -58,3 +58,10 @@ export async function addBookToShelf(
 ): Promise<BookDetail> {
   return apiPatch<BookDetail>(`/books/add-on-shelf/${id}`, { shelfName })
 }
+
+export async function replaceBookEdition(
+  id: string,
+  url: string
+): Promise<BookDetail> {
+  return apiPatch<BookDetail>(`/books/${id}/replace`, { url })
+}

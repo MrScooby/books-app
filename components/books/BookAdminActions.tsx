@@ -21,8 +21,13 @@ import {
   Stack,
   Alert
 } from '@mui/material'
-import { Edit, LibraryAdd } from '@mui/icons-material'
-import { updateBook, addBookToShelf, BookFullDetail } from '@/lib/api/books'
+import { Edit, LibraryAdd, SwapHoriz } from '@mui/icons-material'
+import {
+  updateBook,
+  addBookToShelf,
+  replaceBookEdition,
+  BookFullDetail
+} from '@/lib/api/books'
 import { UpdateBookPayload } from '@/lib/types'
 
 interface Option {
@@ -44,6 +49,7 @@ export default function BookAdminActions({
   const router = useRouter()
   const [editOpen, setEditOpen] = useState(false)
   const [shelfOpen, setShelfOpen] = useState(false)
+  const [replaceOpen, setReplaceOpen] = useState(false)
 
   return (
     <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
@@ -62,6 +68,14 @@ export default function BookAdminActions({
         onClick={() => setShelfOpen(true)}
       >
         Add to shelf
+      </Button>
+      <Button
+        size="small"
+        variant="outlined"
+        startIcon={<SwapHoriz fontSize="small" />}
+        onClick={() => setReplaceOpen(true)}
+      >
+        Replace edition
       </Button>
 
       <EditDialog
@@ -84,6 +98,16 @@ export default function BookAdminActions({
         currentShelfIds={book.shelves.map((s) => s.id)}
         onSaved={() => {
           setShelfOpen(false)
+          router.refresh()
+        }}
+      />
+
+      <ReplaceEditionDialog
+        open={replaceOpen}
+        onClose={() => setReplaceOpen(false)}
+        bookId={book.id}
+        onSaved={() => {
+          setReplaceOpen(false)
           router.refresh()
         }}
       />
@@ -353,6 +377,80 @@ function AddToShelfDialog({
           disabled={loading || available.length === 0}
         >
           {loading ? 'Adding...' : 'Add'}
+        </Button>
+      </DialogActions>
+    </Dialog>
+  )
+}
+
+function ReplaceEditionDialog({
+  open,
+  onClose,
+  bookId,
+  onSaved
+}: {
+  open: boolean
+  onClose: () => void
+  bookId: string
+  onSaved: () => void
+}) {
+  const [url, setUrl] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
+  const handleSave = async () => {
+    setError(null)
+    if (!url.trim()) {
+      setError('URL is required')
+      return
+    }
+
+    setLoading(true)
+    try {
+      await replaceBookEdition(bookId, url.trim())
+      setUrl('')
+      onSaved()
+    } catch (err: any) {
+      setError(err.message || 'Failed to replace edition')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  return (
+    <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
+      <DialogTitle>Replace edition</DialogTitle>
+      <DialogContent>
+        <Stack spacing={2} sx={{ mt: 0.5 }}>
+          <Alert severity="warning">
+            This overwrites the title, authors, genre, page count, ISBN and cover
+            with data scraped from the new URL. Shelves and your rating stay
+            unchanged.
+          </Alert>
+
+          <TextField
+            label="New book URL (lubimyczytac.pl)"
+            value={url}
+            onChange={(e) => setUrl(e.target.value)}
+            fullWidth
+            required
+            disabled={loading}
+          />
+
+          {error && <Alert severity="error">{error}</Alert>}
+        </Stack>
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={onClose} disabled={loading}>
+          Cancel
+        </Button>
+        <Button
+          onClick={handleSave}
+          variant="contained"
+          disableElevation
+          disabled={loading}
+        >
+          {loading ? 'Replacing...' : 'Replace'}
         </Button>
       </DialogActions>
     </Dialog>
